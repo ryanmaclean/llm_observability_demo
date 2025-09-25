@@ -285,6 +285,233 @@
             </div>
         </div>
 
+        <div class="knowledge-base-panel">
+            <h3>📚 LLM Observability Knowledge Base</h3>
+            <div class="knowledge-sections">
+                
+                <div class="knowledge-section">
+                    <h4>🎯 The Application Blueprint: Customer Support AI Assistant</h4>
+                    <div class="knowledge-content">
+                        <p><strong>Core Functionality</strong>: The "Furnish Hub" AI assistant handles customer inquiries including:</p>
+                        <ul>
+                            <li>Product information and recommendations</li>
+                            <li>Pricing and availability queries</li>
+                            <li>Store policies (returns, shipping, etc.)</li>
+                            <li>General furniture questions</li>
+                        </ul>
+                        
+                        <p><strong>Technical Stack</strong>:</p>
+                        <ul>
+                            <li><strong>Language</strong>: Python for AI/ML development</li>
+                            <li><strong>LLM Provider</strong>: OpenAI (GPT-4o-mini, GPT-4o)</li>
+                            <li><strong>Observability Platform</strong>: Datadog LLM Observability</li>
+                        </ul>
+                        
+                        <p><strong>Key Observability Challenges Demonstrated</strong>:</p>
+                        <ol>
+                            <li><strong>Performance & Cost Management</strong>: Token consumption tracking and API latency monitoring</li>
+                            <li><strong>Debugging & Quality Analysis</strong>: Full prompt/response capture for debugging</li>
+                            <li><strong>Semantic Failures & Hallucinations</strong>: Detection of "soft failures" where API succeeds but content is incorrect</li>
+                            <li><strong>Data Privacy & Security</strong>: PII detection and redaction capabilities</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="knowledge-section">
+                    <h4>🔍 The New Imperative of AI Application Monitoring</h4>
+                    <div class="knowledge-content">
+                        <h5>Beyond Deterministic Systems: Unique LLM Challenges</h5>
+                        
+                        <p><strong>The Non-Deterministic Nature</strong>: Unlike traditional software, LLMs are inherently probabilistic. The same prompt can generate different responses, requiring statistical performance baselines rather than exact-match testing.</p>
+                        
+                        <p><strong>The "Black Box" Problem</strong>: Multi-billion parameter LLMs have opaque internal reasoning, making semantic failures (hallucinations, bias propagation, off-topic responses) more critical than technical exceptions.</p>
+                        
+                        <p><strong>Vast Input Space</strong>: Natural language inputs create an effectively infinite, unstructured space that opens doors to unique vulnerabilities like prompt injection attacks.</p>
+                        
+                        <h5>The Three Pillars of LLM Observability</h5>
+                        
+                        <div class="pillar">
+                            <h6>1. Execution Tracing (The "How")</h6>
+                            <ul>
+                                <li><strong>Traces & Spans</strong>: End-to-end request journey visualization</li>
+                                <li><strong>Generations</strong>: Specialized spans for LLM calls with metadata</li>
+                                <li><strong>Retrievals & Tool Calls</strong>: Extended tracing for RAG and agentic systems</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="pillar">
+                            <h6>2. Qualitative Evaluation (The "What")</h6>
+                            <ul>
+                                <li><strong>Key Metrics</strong>: Accuracy, relevance, consistency, faithfulness, safety</li>
+                                <li><strong>Evaluation Methods</strong>: Structural validation, LLM-as-judge, human feedback</li>
+                                <li><strong>Quality Assurance</strong>: Systematic monitoring of semantic performance</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="pillar">
+                            <h6>3. Quantitative Monitoring (The "How Much")</h6>
+                            <ul>
+                                <li><strong>Performance Metrics</strong>: Latency, throughput, error rates</li>
+                                <li><strong>Cost Metrics</strong>: Granular token usage tracking (prompt, completion, total)</li>
+                                <li><strong>Business Metrics</strong>: User experience, satisfaction, task completion</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="knowledge-section">
+                    <h4>🏢 Organizational Impact: Breaking Down Silos</h4>
+                    <div class="knowledge-content">
+                        <p>LLM observability forces convergence between Data Science, DevOps, and Security teams:</p>
+                        <ul>
+                            <li><strong>Data Scientists</strong>: Focus on prompt engineering and model accuracy</li>
+                            <li><strong>DevOps Engineers</strong>: Concerned with reliability, latency, and infrastructure costs</li>
+                            <li><strong>Security Engineers</strong>: Protecting against data leakage and novel attack vectors</li>
+                        </ul>
+                        <p>An observability platform becomes the common ground, providing shared language and unified data views that enable collaborative, cross-functional AI application management.</p>
+                    </div>
+                </div>
+
+                <div class="knowledge-section">
+                    <h4>💼 Business Case for LLM Observability</h4>
+                    <div class="knowledge-content">
+                        <div class="business-benefit">
+                            <h6>Proactive Performance Optimization</h6>
+                            <p>Shift from reactive troubleshooting to proactive optimization through performance baselines and deviation monitoring.</p>
+                        </div>
+                        
+                        <div class="business-benefit">
+                            <h6>Strategic Cost Management</h6>
+                            <p>Granular insights for identifying inefficient prompt patterns and balancing model complexity with performance requirements.</p>
+                        </div>
+                        
+                        <div class="business-benefit">
+                            <h6>Enhanced User Experience</h6>
+                            <p>Connecting technical metrics to user outcomes (feedback scores, task completion rates) to focus optimization efforts.</p>
+                        </div>
+                        
+                        <div class="business-benefit">
+                            <h6>Robust Risk Mitigation</h6>
+                            <p>Comprehensive audit trails, systematic detection of harmful outputs, and protection against security risks like prompt injection.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="knowledge-section">
+                    <h4>🛠️ Datadog LLM Observability: Unified Platform</h4>
+                    <div class="knowledge-content">
+                        <h5>Core Platform Features</h5>
+                        
+                        <div class="feature">
+                            <h6>End-to-End Tracing</h6>
+                            <p>Complete LLM chain visualization with detailed metadata, input-output data, errors, latency, and token usage.</p>
+                        </div>
+                        
+                        <div class="feature">
+                            <h6>Out-of-the-Box Dashboards</h6>
+                            <p>Pre-built dashboards for immediate operational metrics across all major LLM providers (OpenAI, Anthropic, Amazon Bedrock, Google Vertex AI).</p>
+                        </div>
+                        
+                        <div class="feature">
+                            <h6>Quality & Safety Evaluations</h6>
+                            <p>Automatic quality checks (failure to answer, off-topic responses, negative sentiment) plus custom evaluation capabilities.</p>
+                        </div>
+                        
+                        <div class="feature">
+                            <h6>Security & Privacy Scanning</h6>
+                            <p>Built-in PII detection and redaction using Datadog Sensitive Data Scanner, plus prompt injection detection.</p>
+                        </div>
+                        
+                        <div class="feature">
+                            <h6>Prompt & Response Clustering</h6>
+                            <p>Semantic clustering to identify systemic issues and performance drifts by grouping similar low-quality interactions.</p>
+                        </div>
+                        
+                        <h5>Holistic Observability Ecosystem</h5>
+                        
+                        <div class="ecosystem-benefit">
+                            <h6>Seamless APM Correlation</h6>
+                            <p>LLM traces integrated with traditional APM traces, enabling complete request flow visibility from browser clicks through backend services to LLM calls.</p>
+                        </div>
+                        
+                        <div class="ecosystem-benefit">
+                            <h6>Unified Logs, Metrics, and Traces</h6>
+                            <p>Full integration of observability's three pillars, allowing immediate correlation between LLM traces, application logs, and infrastructure metrics.</p>
+                        </div>
+                        
+                        <div class="ecosystem-benefit">
+                            <h6>Strategic Advantage</h6>
+                            <p>Unlike standalone LLM tools that create observability silos, Datadog treats LLMs as first-class citizens within the broader application architecture.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="knowledge-section">
+                    <h4>🔧 Implementation Blueprint</h4>
+                    <div class="knowledge-content">
+                        <h5>Environment Configuration</h5>
+                        
+                        <p><strong>API Keys Required</strong>:</p>
+                        <ul>
+                            <li>OpenAI API Key: For LLM interactions</li>
+                            <li>Datadog API Key: For observability data transmission</li>
+                        </ul>
+                        
+                        <h5>Automatic Instrumentation with ddtrace-run</h5>
+                        
+                        <p><strong>The Magic Command</strong>:</p>
+                        <pre><code>export OPENAI_API_KEY="&lt;YOUR_OPENAI_API_KEY&gt;"
+DD_LLMOBS_ENABLED=1 \
+DD_API_KEY="&lt;YOUR_DATADOG_API_KEY&gt;" \
+DD_LLMOBS_ML_APP="furnish-hub-support-ai" \
+DD_SITE="datadoghq.com" \
+DD_LLMOBS_AGENTLESS_ENABLED=1 \
+ddtrace-run python main.py</code></pre>
+                        
+                        <h5>Advanced Techniques for Production</h5>
+                        
+                        <div class="technique">
+                            <h6>Custom Tags for Business Context</h6>
+                            <pre><code>from ddtrace import tracer
+span = tracer.current_span()
+if span:
+    span.set_tag("customer.id", user_id)
+    span.set_tag("session.id", session_id)
+    span.set_tag("user.subscription_tier", "premium")</code></pre>
+                        </div>
+                        
+                        <div class="technique">
+                            <h6>Proactive Monitoring Strategy</h6>
+                            <ul>
+                                <li><strong>Cost Anomaly Detection</strong>: Monitor token usage spikes</li>
+                                <li><strong>Latency Spike Alerts</strong>: Track API performance against SLOs</li>
+                                <li><strong>Error Rate Monitoring</strong>: Detect API issues and configuration problems</li>
+                                <li><strong>PII Leakage Notifications</strong>: Security alerts for sensitive data detection</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="knowledge-section">
+                    <h4>🎯 Conclusion: Towards Reliable AI Operations</h4>
+                    <div class="knowledge-content">
+                        <p>The journey from experimental AI to enterprise-grade AI requires operational excellence. LLM observability transforms the opaque "black box" of neural networks into a transparent, manageable "glass box" that enables:</p>
+                        
+                        <ul>
+                            <li><strong>Reliable Performance</strong>: Proactive monitoring and optimization</li>
+                            <li><strong>Cost Control</strong>: Strategic management of token usage and model selection</li>
+                            <li><strong>Quality Assurance</strong>: Systematic evaluation and improvement processes</li>
+                            <li><strong>Security Compliance</strong>: Protection against novel AI-specific risks</li>
+                            <li><strong>Cross-functional Collaboration</strong>: Unified platform for diverse team needs</li>
+                        </ul>
+                        
+                        <p><strong>For organizations deploying AI at scale, comprehensive LLM observability is not just a best practice—it's the foundation upon which the future of AI operations will be built.</strong></p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
         <div class="config-panel">
             <h3>⚙️ Configuration</h3>
             
