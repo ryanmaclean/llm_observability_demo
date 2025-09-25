@@ -1,0 +1,29 @@
+{
+  "name": "llm-observability-demo",
+  "version": "1.0.0",
+  "description": "LLM Observability Demo with Datadog integration",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "serve": "node server.js",
+    "test": "./test-local.sh",
+    "test:env": "echo \"Testing environment loading...\" && node -e \"require('dotenv').config({path:'.env.local'}); console.log('OpenAI Key:', process.env.OPENAI_API_KEY ? 'Set' : 'Missing'); console.log('Datadog Token:', process.env.DATADOG_CLIENT_TOKEN ? 'Set' : 'Missing');\""
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": [
+    "llm",
+    "observability",
+    "datadog",
+    "openai",
+    "monitoring",
+    "demo"
+  ],
+  "author": "Claude",
+  "license": "MIT"
+}

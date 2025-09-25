@@ -1,92 +1,160 @@
-# LLM Observability Demo
+# LLM Observability Demo with Datadog
 
-A demonstration repository showcasing best practices and techniques for observability in Large Language Model (LLM) applications.
+A comprehensive demonstration of LLM observability using Datadog's RUM, Logs, and custom metrics to monitor AI-powered applications.
 
 ## Overview
 
-This repository serves as a comprehensive demo for implementing observability in LLM-powered applications. It demonstrates monitoring, logging, tracing, and performance analysis techniques specifically tailored for AI/ML workloads involving Large Language Models.
+This application demonstrates how to implement complete observability for Large Language Model applications using Datadog. It features a modern web interface that integrates with OpenAI's GPT models and provides comprehensive monitoring through Datadog's observability platform.
 
-## What is LLM Observability?
+**Live Demo**: [GitHub Pages Deployment](https://your-username.github.io/llm_observability_demo)
 
-LLM Observability refers to the ability to understand, monitor, and debug Large Language Model applications in production. This includes:
+## Architecture
 
-- **Performance Monitoring**: Track response times, token usage, and throughput
-- **Quality Metrics**: Monitor response quality, hallucination detection, and accuracy
-- **Cost Tracking**: Monitor API usage, token consumption, and associated costs
-- **Error Handling**: Capture and analyze failures, timeouts, and edge cases
-- **User Experience**: Track user interactions, satisfaction, and usage patterns
+- **Frontend**: Vanilla JavaScript SPA with modern UI
+- **LLM Integration**: Direct OpenAI API integration
+- **Observability**: Datadog RUM, Logs SDK, and custom metrics
+- **Deployment**: GitHub Pages compatible (static hosting)
 
 ## Features
 
-- 🔍 **Comprehensive Monitoring**: End-to-end observability for LLM applications
-- 📊 **Performance Analytics**: Detailed metrics and dashboards
-- 🚨 **Alerting System**: Proactive monitoring and notifications
-- 📈 **Cost Analysis**: Track and optimize LLM usage costs
-- 🔧 **Debugging Tools**: Advanced troubleshooting capabilities
-- 📝 **Logging Standards**: Best practices for LLM application logging
+- 🤖 **Three LLM Interaction Modes**:
+  - Chat: General conversation
+  - Summarize: Text summarization
+  - Code Gen: Code generation assistance
+
+- 📊 **Comprehensive Datadog Integration**:
+  - Real User Monitoring (RUM) for user experience tracking
+  - Structured logging for all LLM interactions
+  - Custom metrics for token usage and costs
+  - Performance monitoring and error tracking
+
+- 💰 **Cost Monitoring**:
+  - Real-time token usage tracking
+  - Cost calculation by model
+  - Session-based usage analytics
+
+- 🎯 **Observability Features**:
+  - Request/response correlation
+  - User session tracking
+  - Performance metrics
+  - Error monitoring and alerting
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ or Python 3.8+
-- Access to LLM API (OpenAI, Anthropic, etc.)
-- Docker (optional)
+- Python 3.8+
+- OpenAI API key
+- Datadog API key (optional, for observability)
 
-### Installation
+### Quick Start
 
+1. **Clone and setup**:
+   ```bash
+   git clone https://github.com/ryanmaclean/llm_observability_demo.git
+   cd llm_observability_demo
+   ```
+
+2. **Configure environment**:
+   ```bash
+   cp env.example .env.local
+   ```
+   
+   Edit `.env.local` and add your API keys:
+   ```env
+   OPENAI_KEY=your_openai_api_key_here
+   DD_API_KEY=your_datadog_api_key_here
+   ```
+
+3. **Run the application**:
+   ```bash
+   ./run.sh
+   ```
+   
+   Or manually:
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirements.txt
+   python main.py
+   ```
+
+### Testing with Environment Variables
+
+**Recommended: Use the test script that properly sources .env.local**
 ```bash
-# Clone the repository
-git clone https://github.com/ryanmaclean/llm_observability_demo.git
-cd llm_observability_demo
-
-# Install dependencies
-npm install
-# or
-pip install -r requirements.txt
+npm test
+# or directly:
+./test-local.sh
 ```
 
-### Configuration
+This script will:
+- Load all environment variables from `.env.local`
+- Validate that required keys are set
+- Start the server with proper configuration
+- Show clear status of all API keys
 
-1. Copy the example environment file:
-   ```bash
-   cp .env.example .env
-   ```
+**Alternative: Standard npm start**
+```bash
+npm start
+```
 
-2. Add your API keys and configuration:
-   ```env
-   OPENAI_API_KEY=your_api_key_here
-   ANTHROPIC_API_KEY=your_api_key_here
-   OBSERVABILITY_ENDPOINT=your_monitoring_endpoint
-   ```
+**Verification:**
+The server startup will show your configuration status:
+```
+🚀 LLM Observability Demo Server
+Configuration:
+- OpenAI API Key: ✅ Loaded
+- Datadog Client Token: ✅ Loaded (or ❌ Missing)
+- Datadog App ID: ✅ Loaded (or ❌ Missing)
+```
 
 ## Usage
 
-### Basic Example
+### The Furnish Hub AI Assistant
 
-```javascript
-// Example implementation coming soon
-import { LLMObservability } from './lib/observability';
+This demo features a customer support AI assistant for "The Furnish Hub" furniture store. The assistant can help with:
 
-const observer = new LLMObservability({
-  apiKey: process.env.OPENAI_API_KEY,
-  monitoring: true,
-  tracing: true
-});
+- Product information and recommendations
+- Pricing and availability inquiries  
+- Store policies (returns, shipping, etc.)
+- General furniture questions
 
-// Your LLM application code with observability
-```
+### Running with Observability
 
-### Running the Demo
+To run with Datadog LLM Observability enabled:
 
 ```bash
-# Start the demo application
-npm run demo
-# or
-python demo.py
+# Set up environment variables
+export OPENAI_API_KEY="your_key_here"
+export DD_API_KEY="your_datadog_key_here"
 
-# View the monitoring dashboard
-open http://localhost:3000/dashboard
+# Run with automatic instrumentation
+DD_LLMOBS_ENABLED=1 \
+DD_LLMOBS_ML_APP="furnish-hub-support-ai" \
+DD_SITE="datadoghq.com" \
+DD_LLMOBS_AGENTLESS_ENABLED=1 \
+ddtrace-run python main.py
+```
+
+### Example Interaction
+
+```
+Welcome to The Furnish Hub! How can I help you today? (Type 'exit' to quit)
+
+You: Do you have any oak coffee tables under $300?
+Assistant: Yes! We have several beautiful oak coffee tables under $300. 
+Our "Rustic Oak Coffee Table" is currently $249 and features a solid oak 
+construction with a natural finish. We also have the "Modern Oak Center Table" 
+for $279 with clean lines and a lighter oak stain. Both are in stock and 
+available for immediate delivery. Would you like more details about either of these?
+
+You: What's your return policy?
+Assistant: We offer a 30-day return policy for all furniture items. Items must 
+be in original condition with all packaging and tags intact. We'll provide a 
+full refund or exchange. For larger items, we can arrange pickup. Smaller 
+items can be returned to any of our store locations. Do you have a specific 
+item you're considering returning?
 ```
 
 ## Key Concepts Demonstrated

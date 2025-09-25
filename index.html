@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Observability Demo</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Datadog RUM -->
+    <script>
+        (function(h,o,u,n,d) {
+            h=h[d]=h[d]||{q:[],onReady:function(c){h.q.push(c)}}
+            d=o.createElement(u);d.async=1;d.src=n
+            n=o.getElementsByTagName(u)[0];n.parentNode.insertBefore(d,n)
+        })(window,document,'script','https://www.datadoghq-browser-agent.com/us1/v5/datadog-rum.js','DD_RUM')
+        DD_RUM.onReady(function() {
+            DD_RUM.init({
+                applicationId: 'YOUR_DATADOG_APPLICATION_ID',
+                clientToken: 'YOUR_DATADOG_CLIENT_TOKEN',
+                site: 'datadoghq.com',
+                service: 'llm-observability-demo',
+                env: 'production',
+                version: '1.0.0',
+                sessionSampleRate: 100,
+                sessionReplaySampleRate: 20,
+                trackUserInteractions: true,
+                trackResources: true,
+                trackLongTasks: true,
+                defaultPrivacyLevel: 'mask-user-input'
+            })
+        })
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 LLM Observability Demo</h1>
+            <p>Comprehensive monitoring of AI-powered applications with Datadog</p>
+        </header>
+
+        <div class="mode-selector">
+            <button class="mode-btn active" data-mode="chat">💬 Chat</button>
+            <button class="mode-btn" data-mode="summarize">📝 Summarize</button>
+            <button class="mode-btn" data-mode="codegen">💻 Code Gen</button>
+        </div>
+
+        <div class="main-content">
+            <div class="chat-container" id="chatMode">
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="input-container">
+                    <input type="text" id="chatInput" placeholder="Ask me anything..." />
+                    <button id="sendBtn">Send</button>
+                </div>
+            </div>
+
+            <div class="summarize-container hidden" id="summarizeMode">
+                <div class="input-section">
+                    <h3>Text Summarization</h3>
+                    <textarea id="summarizeInput" placeholder="Paste your text here to summarize..."></textarea>
+                    <button id="summarizeBtn">Summarize</button>
+                </div>
+                <div class="output-section">
+                    <h3>Summary</h3>
+                    <div id="summarizeOutput"></div>
+                </div>
+            </div>
+
+            <div class="codegen-container hidden" id="codegenMode">
+                <div class="input-section">
+                    <h3>Code Generation</h3>
+                    <textarea id="codegenInput" placeholder="Describe what code you want me to generate..."></textarea>
+                    <button id="codegenBtn">Generate Code</button>
+                </div>
+                <div class="output-section">
+                    <h3>Generated Code</h3>
+                    <pre id="codegenOutput"></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="metrics-panel">
+            <h3>📊 Session Metrics</h3>
+            <div class="metrics-grid">
+                <div class="metric">
+                    <span class="metric-label">Tokens Used:</span>
+                    <span class="metric-value" id="tokenCount">0</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Estimated Cost:</span>
+                    <span class="metric-value" id="costEstimate">$0.00</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Requests:</span>
+                    <span class="metric-value" id="requestCount">0</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Avg Response Time:</span>
+                    <span class="metric-value" id="avgResponseTime">0ms</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="config-panel">
+            <h3>⚙️ Configuration</h3>
+            <div class="config-item">
+                <label for="apiKey">OpenAI API Key:</label>
+                <input type="password" id="apiKey" placeholder="sk-..." />
+            </div>
+            <div class="config-item">
+                <label for="model">Model:</label>
+                <select id="model">
+                    <option value="gpt-4o-mini">GPT-4o Mini</option>
+                    <option value="gpt-4o">GPT-4o</option>
+                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                </select>
+            </div>
+            <button id="saveConfig">Save Configuration</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
