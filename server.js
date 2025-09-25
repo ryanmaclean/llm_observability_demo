@@ -53,6 +53,26 @@ function injectEnvironmentVariables(content, filePath) {
 
         return modifiedContent;
     }
+
+    // Also inject environment variables into HTML files for RUM initialization
+    if (filePath.endsWith('index.html')) {
+        let modifiedContent = content;
+
+        // Replace Datadog placeholders in HTML
+        const datadogVars = {
+            'YOUR_DATADOG_APPLICATION_ID': process.env.DATADOG_APPLICATION_ID || '',
+            'YOUR_DATADOG_CLIENT_TOKEN': process.env.DATADOG_CLIENT_TOKEN || '',
+            'datadoghq.com': process.env.DATADOG_SITE || 'datadoghq.com'
+        };
+
+        Object.keys(datadogVars).forEach(key => {
+            const regex = new RegExp(key, 'g');
+            modifiedContent = modifiedContent.replace(regex, datadogVars[key]);
+        });
+
+        return modifiedContent;
+    }
+
     return content;
 }
 

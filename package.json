@@ -8,7 +8,9 @@
     "dev": "nodemon server.js",
     "serve": "node server.js",
     "test": "./test-local.sh",
-    "test:env": "echo \"Testing environment loading...\" && node -e \"require('dotenv').config({path:'.env.local'}); console.log('OpenAI Key:', process.env.OPENAI_API_KEY ? 'Set' : 'Missing'); console.log('Datadog Token:', process.env.DATADOG_CLIENT_TOKEN ? 'Set' : 'Missing');\""
+    "test:env": "echo \"Testing environment loading...\" && node -e \"require('dotenv').config({path:'.env.local'}); console.log('OpenAI Key:', process.env.OPENAI_API_KEY ? 'Set' : 'Missing'); console.log('Datadog Token:', process.env.DATADOG_CLIENT_TOKEN ? 'Set' : 'Missing');\"",
+    "validate": "node validate-rum.js",
+    "validate:rum": "node validate-rum.js"
   },
   "dependencies": {
     "dotenv": "^16.3.1"

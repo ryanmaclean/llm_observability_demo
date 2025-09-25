@@ -1,0 +1,72 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Configure application with secrets
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          DATADOG_CLIENT_TOKEN: ${{ secrets.DATADOG_CLIENT_TOKEN }}
+          DATADOG_APPLICATION_ID: ${{ secrets.DATADOG_APPLICATION_ID }}
+          DATADOG_SITE: ${{ secrets.DATADOG_SITE }}
+        run: |
+          echo "🔧 Configuring application with environment variables..."
+
+          # Replace placeholders in config.js
+          sed -i "s/{{OPENAI_API_KEY}}/$OPENAI_API_KEY/g" config.js
+          sed -i "s/YOUR_DATADOG_CLIENT_TOKEN/$DATADOG_CLIENT_TOKEN/g" config.js
+          sed -i "s/YOUR_DATADOG_APPLICATION_ID/$DATADOG_APPLICATION_ID/g" config.js
+          sed -i "s/datadoghq\.com/${DATADOG_SITE:-datadoghq.com}/g" config.js
+
+          # Also replace placeholders in index.html for direct RUM initialization
+          sed -i "s/YOUR_DATADOG_CLIENT_TOKEN/$DATADOG_CLIENT_TOKEN/g" index.html
+          sed -i "s/YOUR_DATADOG_APPLICATION_ID/$DATADOG_APPLICATION_ID/g" index.html
+          sed -i "s/datadoghq\.com/${DATADOG_SITE:-datadoghq.com}/g" index.html
+
+          echo "✅ Configuration complete"
+
+      - name: Verify configuration
+        run: |
+          echo "🔍 Verifying configuration injection..."
+          echo "Config.js OpenAI Key: $(grep -o 'OPENAI_API_KEY.*' config.js | head -1 | sed 's/OPENAI_API_KEY.*sk-/PRESENT (sk-)/')"
+          echo "Config.js Datadog Token: $(grep -o 'DATADOG_CLIENT_TOKEN.*' config.js | head -1 | sed 's/DATADOG_CLIENT_TOKEN.*/PRESENT/')"
+          echo "Index.html Datadog references: $(grep -c 'YOUR_DATADOG' index.html || echo '0 (replaced successfully)')"
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
