@@ -50,7 +50,7 @@
                 // Check if we have valid tokens (these are real working values)
                 const hasValidTokens = DATADOG_CONFIG.clientToken &&
                                      DATADOG_CONFIG.applicationId &&
-                                     DATADOG_CONFIG.clientToken.startsWith('pub_') &&
+                                     DATADOG_CONFIG.clientToken.startsWith('pub') &&
                                      DATADOG_CONFIG.applicationId.length > 0;
 
                 if (!hasValidTokens) {
