@@ -204,6 +204,46 @@
                 }
             };
 
+            // Enhanced debugging function
+            window.debugDatadogRUM = function() {
+                console.log('🔍 Datadog RUM Debug Information:');
+                console.log('================================');
+                
+                // Check RUM status
+                console.log('DD_RUM Available:', !!window.DD_RUM);
+                console.log('DD_LOGS Available:', !!window.DD_LOGS);
+                
+                // Check configuration
+                console.log('Current Configuration:', {
+                    clientToken: DATADOG_CONFIG.clientToken.substring(0, 10) + '...',
+                    applicationId: DATADOG_CONFIG.applicationId.substring(0, 8) + '...',
+                    site: DATADOG_CONFIG.site,
+                    service: DATADOG_CONFIG.service,
+                    env: DATADOG_CONFIG.env,
+                    sessionSampleRate: DATADOG_CONFIG.sessionSampleRate + '%',
+                    replaySampleRate: DATADOG_CONFIG.sessionReplaySampleRate + '%'
+                });
+                
+                // Send test action
+                if (window.DD_RUM) {
+                    window.DD_RUM.addAction('debug_test', {
+                        debug_type: 'manual_debug',
+                        timestamp: new Date().toISOString(),
+                        user_agent: navigator.userAgent,
+                        url: window.location.href,
+                        configuration_source: window.location.search.includes('dd_') ? 'url_params' : 'hardcoded'
+                    });
+                    console.log('✅ Test action sent to Datadog RUM');
+                } else {
+                    console.error('❌ DD_RUM not available');
+                }
+                
+                // Check for errors
+                console.log('Check browser console for any error messages');
+                console.log('Check Network tab for requests to Datadog');
+                console.log('Check Datadog RUM dashboard for live sessions');
+            };
+
             // Auto-refresh configuration display when page loads
             setTimeout(() => {
                 if (window.refreshConfiguration) {
