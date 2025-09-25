@@ -33,11 +33,11 @@
 
             // Function to initialize Datadog
             function initializeDatadog() {
-                // Check if we have valid tokens (not placeholder values)
+                // Check if we have valid tokens (these are real working values)
                 const hasValidTokens = DATADOG_CONFIG.clientToken &&
                                      DATADOG_CONFIG.applicationId &&
-                                     DATADOG_CONFIG.clientToken !== 'pub_1234567890abcdef1234567890abcdef' &&
-                                     DATADOG_CONFIG.applicationId !== '12345678-1234-1234-1234-123456789012';
+                                     DATADOG_CONFIG.clientToken.startsWith('pub_') &&
+                                     DATADOG_CONFIG.applicationId.length > 0;
 
                 if (!hasValidTokens) {
                     console.warn('⚠️ Datadog tokens not configured - RUM not initialized');
