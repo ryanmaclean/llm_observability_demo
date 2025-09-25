@@ -34,3 +34,23 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Python virtual environment
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Server-side files (not needed for GitHub Pages)
+server.js
+config-local.js
+validate-rum.js
+test-local.sh
+main.py
+test_app.py
+test_llm_observability.py
+requirements.txt
+
+# Old app.js (replaced by modular js/ files)
+app.js
