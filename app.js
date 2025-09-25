@@ -3,6 +3,19 @@ class LLMObservabilityDemo {
     constructor() {
         this.apiKey = '';
         this.model = 'gpt-4o-mini';
+        this.datadogConfig = {
+            applicationId: '',
+            clientToken: '',
+            site: 'datadoghq.com',
+            service: 'llm-observability-demo',
+            env: 'production',
+            version: '1.0.0',
+            sessionSampleRate: 100,
+            replaySampleRate: 20,
+            trackUserInteractions: true,
+            trackResources: true,
+            trackLongTasks: true
+        };
         this.sessionMetrics = {
             tokenCount: 0,
             requestCount: 0,
@@ -46,6 +59,20 @@ class LLMObservabilityDemo {
         // Configuration
         document.getElementById('saveConfig').addEventListener('click', () => {
             this.saveConfiguration();
+        });
+
+        document.getElementById('resetConfig').addEventListener('click', () => {
+            this.resetConfiguration();
+        });
+
+        // Custom site handling
+        document.getElementById('ddSite').addEventListener('change', (e) => {
+            const customContainer = document.getElementById('customSiteContainer');
+            if (e.target.value === 'custom') {
+                customContainer.style.display = 'block';
+            } else {
+                customContainer.style.display = 'none';
+            }
         });
 
         // Initialize Datadog RUM logging
@@ -279,8 +306,27 @@ class LLMObservabilityDemo {
     }
 
     saveConfiguration() {
+        // OpenAI configuration
         this.apiKey = document.getElementById('apiKey').value.trim();
         this.model = document.getElementById('model').value;
+
+        // Datadog configuration
+        this.datadogConfig.applicationId = document.getElementById('ddApplicationId').value.trim();
+        this.datadogConfig.clientToken = document.getElementById('ddClientToken').value.trim();
+        
+        const siteSelect = document.getElementById('ddSite').value;
+        this.datadogConfig.site = siteSelect === 'custom' 
+            ? document.getElementById('ddCustomSite').value.trim() 
+            : siteSelect;
+            
+        this.datadogConfig.service = document.getElementById('ddService').value.trim() || 'llm-observability-demo';
+        this.datadogConfig.env = document.getElementById('ddEnv').value;
+        this.datadogConfig.version = document.getElementById('ddVersion').value.trim() || '1.0.0';
+        this.datadogConfig.sessionSampleRate = parseInt(document.getElementById('ddSessionSampleRate').value) || 100;
+        this.datadogConfig.replaySampleRate = parseInt(document.getElementById('ddReplaySampleRate').value) || 20;
+        this.datadogConfig.trackUserInteractions = document.getElementById('ddTrackUserInteractions').checked;
+        this.datadogConfig.trackResources = document.getElementById('ddTrackResources').checked;
+        this.datadogConfig.trackLongTasks = document.getElementById('ddTrackLongTasks').checked;
 
         if (!this.apiKey) {
             this.showError('Please enter your OpenAI API key.');
@@ -290,15 +336,23 @@ class LLMObservabilityDemo {
         // Save to localStorage
         localStorage.setItem('llm_demo_config', JSON.stringify({
             apiKey: this.apiKey,
-            model: this.model
+            model: this.model,
+            datadogConfig: this.datadogConfig
         }));
 
         this.showSuccess('Configuration saved successfully!');
         
+        // Reinitialize Datadog with new configuration
+        this.initializeDatadogLogging();
+        
         // Log configuration update to Datadog
         this.logToDatadog('configuration_update', {
             model: this.model,
-            has_api_key: !!this.apiKey
+            has_api_key: !!this.apiKey,
+            has_datadog_config: !!(this.datadogConfig.applicationId && this.datadogConfig.clientToken),
+            site: this.datadogConfig.site,
+            service: this.datadogConfig.service,
+            env: this.datadogConfig.env
         });
     }
 
@@ -309,18 +363,122 @@ class LLMObservabilityDemo {
             this.apiKey = config.apiKey || '';
             this.model = config.model || 'gpt-4o-mini';
             
+            // Load Datadog configuration
+            if (config.datadogConfig) {
+                this.datadogConfig = { ...this.datadogConfig, ...config.datadogConfig };
+            }
+            
+            // Populate form fields
             document.getElementById('apiKey').value = this.apiKey;
             document.getElementById('model').value = this.model;
+            document.getElementById('ddApplicationId').value = this.datadogConfig.applicationId;
+            document.getElementById('ddClientToken').value = this.datadogConfig.clientToken;
+            document.getElementById('ddService').value = this.datadogConfig.service;
+            document.getElementById('ddEnv').value = this.datadogConfig.env;
+            document.getElementById('ddVersion').value = this.datadogConfig.version;
+            document.getElementById('ddSessionSampleRate').value = this.datadogConfig.sessionSampleRate;
+            document.getElementById('ddReplaySampleRate').value = this.datadogConfig.replaySampleRate;
+            document.getElementById('ddTrackUserInteractions').checked = this.datadogConfig.trackUserInteractions;
+            document.getElementById('ddTrackResources').checked = this.datadogConfig.trackResources;
+            document.getElementById('ddTrackLongTasks').checked = this.datadogConfig.trackLongTasks;
+            
+            // Handle site selection
+            const siteSelect = document.getElementById('ddSite');
+            const customContainer = document.getElementById('customSiteContainer');
+            const customSiteInput = document.getElementById('ddCustomSite');
+            
+            if (this.datadogConfig.site && !['datadoghq.com', 'datadoghq.eu', 'us3.datadoghq.com', 'us5.datadoghq.com', 'ap1.datadoghq.com'].includes(this.datadogConfig.site)) {
+                siteSelect.value = 'custom';
+                customContainer.style.display = 'block';
+                customSiteInput.value = this.datadogConfig.site;
+            } else {
+                siteSelect.value = this.datadogConfig.site || 'datadoghq.com';
+                customContainer.style.display = 'none';
+            }
         }
     }
 
+    resetConfiguration() {
+        // Reset to defaults
+        this.apiKey = '';
+        this.model = 'gpt-4o-mini';
+        this.datadogConfig = {
+            applicationId: '',
+            clientToken: '',
+            site: 'datadoghq.com',
+            service: 'llm-observability-demo',
+            env: 'production',
+            version: '1.0.0',
+            sessionSampleRate: 100,
+            replaySampleRate: 20,
+            trackUserInteractions: true,
+            trackResources: true,
+            trackLongTasks: true
+        };
+        
+        // Clear localStorage
+        localStorage.removeItem('llm_demo_config');
+        
+        // Reset form fields
+        document.getElementById('apiKey').value = '';
+        document.getElementById('model').value = 'gpt-4o-mini';
+        document.getElementById('ddApplicationId').value = '';
+        document.getElementById('ddClientToken').value = '';
+        document.getElementById('ddSite').value = 'datadoghq.com';
+        document.getElementById('ddCustomSite').value = '';
+        document.getElementById('ddService').value = 'llm-observability-demo';
+        document.getElementById('ddEnv').value = 'production';
+        document.getElementById('ddVersion').value = '1.0.0';
+        document.getElementById('ddSessionSampleRate').value = '100';
+        document.getElementById('ddReplaySampleRate').value = '20';
+        document.getElementById('ddTrackUserInteractions').checked = true;
+        document.getElementById('ddTrackResources').checked = true;
+        document.getElementById('ddTrackLongTasks').checked = true;
+        
+        // Hide custom site container
+        document.getElementById('customSiteContainer').style.display = 'none';
+        
+        this.showSuccess('Configuration reset to defaults!');
+    }
+
     initializeDatadogLogging() {
+        // Only initialize if we have valid Datadog configuration
+        if (!this.datadogConfig.applicationId || !this.datadogConfig.clientToken) {
+            console.log('Datadog RUM not initialized: Missing Application ID or Client Token');
+            return;
+        }
+
         // Set up custom logging for LLM interactions
         if (window.DD_RUM) {
-            DD_RUM.addAction('app_initialized', {
-                timestamp: Date.now(),
-                version: '1.0.0'
-            });
+            // Reinitialize with current configuration
+            try {
+                DD_RUM.init({
+                    applicationId: this.datadogConfig.applicationId,
+                    clientToken: this.datadogConfig.clientToken,
+                    site: this.datadogConfig.site,
+                    service: this.datadogConfig.service,
+                    env: this.datadogConfig.env,
+                    version: this.datadogConfig.version,
+                    sessionSampleRate: this.datadogConfig.sessionSampleRate,
+                    sessionReplaySampleRate: this.datadogConfig.replaySampleRate,
+                    trackUserInteractions: this.datadogConfig.trackUserInteractions,
+                    trackResources: this.datadogConfig.trackResources,
+                    trackLongTasks: this.datadogConfig.trackLongTasks,
+                    defaultPrivacyLevel: 'mask-user-input'
+                });
+                
+                DD_RUM.addAction('app_initialized', {
+                    timestamp: Date.now(),
+                    version: this.datadogConfig.version,
+                    site: this.datadogConfig.site,
+                    service: this.datadogConfig.service,
+                    env: this.datadogConfig.env
+                });
+                
+                console.log('Datadog RUM initialized successfully');
+            } catch (error) {
+                console.error('Failed to initialize Datadog RUM:', error);
+            }
         }
     }
 

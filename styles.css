@@ -251,6 +251,22 @@ button:disabled {
     color: #007bff;
 }
 
+.config-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 15px;
+    border: 1px solid #e9ecef;
+}
+
+.config-section h4 {
+    margin-bottom: 15px;
+    color: #495057;
+    font-size: 1.1rem;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 8px;
+}
+
 .config-item {
     margin-bottom: 20px;
 }
@@ -274,6 +290,26 @@ button:disabled {
 
 .config-item input:focus, .config-item select:focus {
     border-color: #007bff;
+}
+
+.config-item input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+}
+
+.config-item label:has(input[type="checkbox"]) {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+#resetConfig {
+    background: #6c757d;
+    margin-left: 10px;
+}
+
+#resetConfig:hover {
+    background: #545b62;
 }
 
 .loading {

@@ -5,29 +5,111 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LLM Observability Demo</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Datadog RUM -->
+    <!-- Load Configuration First -->
+    <script src="config.js"></script>
+
+    <!-- Datadog RUM SDK -->
+    <script src="https://www.datadoghq-browser-agent.com/datadog-rum-v4.js" crossorigin="anonymous"></script>
+    <script src="https://www.datadoghq-browser-agent.com/datadog-logs-v4.js" crossorigin="anonymous"></script>
+
+    <!-- Initialize Datadog RUM -->
     <script>
-        (function(h,o,u,n,d) {
-            h=h[d]=h[d]||{q:[],onReady:function(c){h.q.push(c)}}
-            d=o.createElement(u);d.async=1;d.src=n
-            n=o.getElementsByTagName(u)[0];n.parentNode.insertBefore(d,n)
-        })(window,document,'script','https://www.datadoghq-browser-agent.com/us1/v5/datadog-rum.js','DD_RUM')
-        DD_RUM.onReady(function() {
-            DD_RUM.init({
-                applicationId: 'YOUR_DATADOG_APPLICATION_ID',
-                clientToken: 'YOUR_DATADOG_CLIENT_TOKEN',
-                site: 'datadoghq.com',
-                service: 'llm-observability-demo',
-                env: 'production',
-                version: '1.0.0',
-                sessionSampleRate: 100,
-                sessionReplaySampleRate: 20,
-                trackUserInteractions: true,
-                trackResources: true,
-                trackLongTasks: true,
-                defaultPrivacyLevel: 'mask-user-input'
-            })
-        })
+        (function() {
+            // Function to initialize Datadog
+            function initializeDatadog() {
+                if (!window.CONFIG) {
+                    console.warn('⚠️ CONFIG not available, retrying...');
+                    setTimeout(initializeDatadog, 100);
+                    return;
+                }
+
+                const config = window.CONFIG;
+
+                // Check if we have valid tokens
+                const hasValidTokens = config.DATADOG_CLIENT_TOKEN &&
+                                     config.DATADOG_APPLICATION_ID &&
+                                     config.DATADOG_CLIENT_TOKEN !== 'YOUR_DATADOG_CLIENT_TOKEN' &&
+                                     config.DATADOG_APPLICATION_ID !== 'YOUR_DATADOG_APPLICATION_ID';
+
+                if (!hasValidTokens) {
+                    console.warn('⚠️ Datadog tokens not configured - RUM not initialized');
+                    // Create placeholder objects to prevent errors
+                    window.DD_RUM = window.DD_RUM || {
+                        init: () => {},
+                        addAction: () => {},
+                        addError: () => {},
+                        addTiming: () => {},
+                        setGlobalContextProperty: () => {},
+                        startSessionReplayRecording: () => {}
+                    };
+                    window.DD_LOGS = window.DD_LOGS || {
+                        init: () => {},
+                        logger: {
+                            info: () => {},
+                            error: () => {},
+                            warn: () => {}
+                        }
+                    };
+                    return;
+                }
+
+                try {
+                    // Initialize RUM
+                    if (window.DD_RUM) {
+                        window.DD_RUM.init({
+                            clientToken: config.DATADOG_CLIENT_TOKEN,
+                            applicationId: config.DATADOG_APPLICATION_ID,
+                            site: config.DATADOG_SITE || 'datadoghq.com',
+                            service: config.DATADOG_SERVICE || 'llm-observability-demo',
+                            env: config.DATADOG_ENV || 'production',
+                            version: config.DATADOG_VERSION || '1.0.0',
+                            sessionSampleRate: 100,
+                            sessionReplaySampleRate: 20,
+                            trackUserInteractions: true,
+                            trackResources: true,
+                            trackLongTasks: true,
+                            defaultPrivacyLevel: 'mask-user-input'
+                        });
+
+                        window.DD_RUM.startSessionReplayRecording();
+
+                        // Set global context
+                        window.DD_RUM.setGlobalContextProperty('application_type', 'llm_demo');
+                        window.DD_RUM.setGlobalContextProperty('deployment_method', 'static_hosting');
+                        window.DD_RUM.setGlobalContextProperty('framework', 'vanilla_js');
+                    }
+
+                    // Initialize Logs
+                    if (window.DD_LOGS) {
+                        window.DD_LOGS.init({
+                            clientToken: config.DATADOG_CLIENT_TOKEN,
+                            site: config.DATADOG_SITE || 'datadoghq.com',
+                            service: config.DATADOG_SERVICE || 'llm-observability-demo',
+                            env: config.DATADOG_ENV || 'production',
+                            version: config.DATADOG_VERSION || '1.0.0',
+                            sessionSampleRate: 100,
+                            silentMultipleInit: true
+                        });
+                    }
+
+                    console.log('✅ Datadog RUM and Logs initialized successfully');
+
+                    // Track page load
+                    if (window.DD_RUM) {
+                        window.DD_RUM.addAction('page_loaded', {
+                            page_type: 'llm_demo',
+                            timestamp: new Date().toISOString()
+                        });
+                    }
+
+                } catch (error) {
+                    console.error('❌ Failed to initialize Datadog:', error);
+                }
+            }
+
+            // Start initialization
+            initializeDatadog();
+        })();
     </script>
 </head>
 <body>
@@ -101,22 +183,106 @@
 
         <div class="config-panel">
             <h3>⚙️ Configuration</h3>
-            <div class="config-item">
-                <label for="apiKey">OpenAI API Key:</label>
-                <input type="password" id="apiKey" placeholder="sk-..." />
+            
+            <div class="config-section">
+                <h4>🤖 OpenAI Configuration</h4>
+                <div class="config-item">
+                    <label for="apiKey">OpenAI API Key:</label>
+                    <input type="password" id="apiKey" placeholder="sk-..." />
+                </div>
+                <div class="config-item">
+                    <label for="model">Model:</label>
+                    <select id="model">
+                        <option value="gpt-4o-mini">GPT-4o Mini</option>
+                        <option value="gpt-4o">GPT-4o</option>
+                        <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                    </select>
+                </div>
             </div>
-            <div class="config-item">
-                <label for="model">Model:</label>
-                <select id="model">
-                    <option value="gpt-4o-mini">GPT-4o Mini</option>
-                    <option value="gpt-4o">GPT-4o</option>
-                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                </select>
+
+            <div class="config-section">
+                <h4>📊 Datadog LLM Observability</h4>
+                <div class="config-item">
+                    <label for="ddApplicationId">Application ID:</label>
+                    <input type="text" id="ddApplicationId" placeholder="YOUR_DATADOG_APPLICATION_ID" />
+                </div>
+                <div class="config-item">
+                    <label for="ddClientToken">Client Token:</label>
+                    <input type="password" id="ddClientToken" placeholder="YOUR_DATADOG_CLIENT_TOKEN" />
+                </div>
+                <div class="config-item">
+                    <label for="ddSite">Site:</label>
+                    <select id="ddSite">
+                        <option value="datadoghq.com">US1 (datadoghq.com)</option>
+                        <option value="datadoghq.eu">EU1 (datadoghq.eu)</option>
+                        <option value="us3.datadoghq.com">US3 (us3.datadoghq.com)</option>
+                        <option value="us5.datadoghq.com">US5 (us5.datadoghq.com)</option>
+                        <option value="ap1.datadoghq.com">AP1 (ap1.datadoghq.com)</option>
+                        <option value="custom">Custom Site</option>
+                    </select>
+                </div>
+                <div class="config-item" id="customSiteContainer" style="display: none;">
+                    <label for="ddCustomSite">Custom Site URL:</label>
+                    <input type="text" id="ddCustomSite" placeholder="your-custom-site.datadoghq.com" />
+                </div>
+                <div class="config-item">
+                    <label for="ddService">Service Name:</label>
+                    <input type="text" id="ddService" placeholder="llm-observability-demo" />
+                </div>
+                <div class="config-item">
+                    <label for="ddEnv">Environment:</label>
+                    <select id="ddEnv">
+                        <option value="production">Production</option>
+                        <option value="staging">Staging</option>
+                        <option value="development">Development</option>
+                        <option value="test">Test</option>
+                    </select>
+                </div>
+                <div class="config-item">
+                    <label for="ddVersion">Version:</label>
+                    <input type="text" id="ddVersion" placeholder="1.0.0" />
+                </div>
             </div>
+
+            <div class="config-section">
+                <h4>🔧 Advanced Datadog Settings</h4>
+                <div class="config-item">
+                    <label for="ddSessionSampleRate">Session Sample Rate (%):</label>
+                    <input type="number" id="ddSessionSampleRate" min="0" max="100" value="100" />
+                </div>
+                <div class="config-item">
+                    <label for="ddReplaySampleRate">Session Replay Sample Rate (%):</label>
+                    <input type="number" id="ddReplaySampleRate" min="0" max="100" value="20" />
+                </div>
+                <div class="config-item">
+                    <label>
+                        <input type="checkbox" id="ddTrackUserInteractions" checked />
+                        Track User Interactions
+                    </label>
+                </div>
+                <div class="config-item">
+                    <label>
+                        <input type="checkbox" id="ddTrackResources" checked />
+                        Track Resources
+                    </label>
+                </div>
+                <div class="config-item">
+                    <label>
+                        <input type="checkbox" id="ddTrackLongTasks" checked />
+                        Track Long Tasks
+                    </label>
+                </div>
+            </div>
+
             <button id="saveConfig">Save Configuration</button>
+            <button id="resetConfig">Reset to Defaults</button>
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <!-- Load our application scripts -->
+    <script src="js/datadog.js"></script>
+    <script src="js/openai.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
