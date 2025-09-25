@@ -345,6 +345,93 @@ button:disabled {
     border: 1px solid #c3e6cb;
 }
 
+/* Configuration Display Styles */
+.config-info {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.config-display {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 12px;
+    margin-top: 10px;
+}
+
+.config-display .config-item {
+    margin-bottom: 8px;
+    padding: 4px 0;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.config-display .config-item:last-child {
+    border-bottom: none;
+}
+
+.config-methods {
+    margin-top: 20px;
+}
+
+.method {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.method h6 {
+    color: #495057;
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.method p {
+    margin: 8px 0;
+    color: #6c757d;
+    font-size: 13px;
+}
+
+.method code {
+    background: #e9ecef;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: #495057;
+}
+
+.url-examples {
+    margin-top: 10px;
+}
+
+.url-examples ul {
+    margin: 8px 0;
+    padding-left: 20px;
+}
+
+.url-examples li {
+    margin: 4px 0;
+    font-size: 12px;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.button-group button {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 13px;
+}
+
 @media (max-width: 768px) {
     .container {
         padding: 10px;
@@ -364,5 +451,9 @@ button:disabled {
     
     .message {
         max-width: 90%;
+    }
+    
+    .button-group {
+        flex-direction: column;
     }
 }
