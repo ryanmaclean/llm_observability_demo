@@ -30,34 +30,13 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Configure application with secrets
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          DATADOG_CLIENT_TOKEN: ${{ secrets.DATADOG_CLIENT_TOKEN }}
-          DATADOG_APPLICATION_ID: ${{ secrets.DATADOG_APPLICATION_ID }}
-          DATADOG_SITE: ${{ secrets.DATADOG_SITE }}
+      - name: Verify static configuration
         run: |
-          echo "🔧 Configuring application with environment variables..."
-
-          # Replace placeholders in config.js
-          sed -i "s/{{OPENAI_API_KEY}}/$OPENAI_API_KEY/g" config.js
-          sed -i "s/YOUR_DATADOG_CLIENT_TOKEN/$DATADOG_CLIENT_TOKEN/g" config.js
-          sed -i "s/YOUR_DATADOG_APPLICATION_ID/$DATADOG_APPLICATION_ID/g" config.js
-          sed -i "s/datadoghq\.com/${DATADOG_SITE:-datadoghq.com}/g" config.js
-
-          # Also replace placeholders in index.html for direct RUM initialization
-          sed -i "s/YOUR_DATADOG_CLIENT_TOKEN/$DATADOG_CLIENT_TOKEN/g" index.html
-          sed -i "s/YOUR_DATADOG_APPLICATION_ID/$DATADOG_APPLICATION_ID/g" index.html
-          sed -i "s/datadoghq\.com/${DATADOG_SITE:-datadoghq.com}/g" index.html
-
-          echo "✅ Configuration complete"
-
-      - name: Verify configuration
-        run: |
-          echo "🔍 Verifying configuration injection..."
-          echo "Config.js OpenAI Key: $(grep -o 'OPENAI_API_KEY.*' config.js | head -1 | sed 's/OPENAI_API_KEY.*sk-/PRESENT (sk-)/')"
-          echo "Config.js Datadog Token: $(grep -o 'DATADOG_CLIENT_TOKEN.*' config.js | head -1 | sed 's/DATADOG_CLIENT_TOKEN.*/PRESENT/')"
-          echo "Index.html Datadog references: $(grep -c 'YOUR_DATADOG' index.html || echo '0 (replaced successfully)')"
+          echo "🔍 Verifying hardcoded configuration..."
+          echo "✅ Datadog Client Token: $(grep -o 'pub941f8b1659ac0af8597b9c41a0cfe121' config.js | head -1 || echo 'MISSING')"
+          echo "✅ Datadog Application ID: $(grep -o 'fde3bfb4-cc7c-49ad-82c2-9fed18ce298c' config.js | head -1 || echo 'MISSING')"
+          echo "✅ OpenAI API Key: User-supplied via UI (secure)"
+          echo "✅ Static deployment ready - no secrets required"
 
       - name: Setup Pages
         uses: actions/configure-pages@v3

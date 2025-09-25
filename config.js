@@ -4,9 +4,9 @@ window.CONFIG = {
     OPENAI_API_KEY: '',
     OPENAI_MODEL: 'gpt-4o-mini',
     
-    // Datadog Configuration
-    DATADOG_CLIENT_TOKEN: '',
-    DATADOG_APPLICATION_ID: '',
+    // Datadog Configuration (hardcoded - these are public values)
+    DATADOG_CLIENT_TOKEN: 'pub941f8b1659ac0af8597b9c41a0cfe121',
+    DATADOG_APPLICATION_ID: 'fde3bfb4-cc7c-49ad-82c2-9fed18ce298c',
     DATADOG_SITE: 'datadoghq.com',
     DATADOG_SERVICE: 'llm-observability-demo',
     DATADOG_ENV: 'production',

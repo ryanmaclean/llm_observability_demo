@@ -12,27 +12,40 @@
     <script src="https://www.datadoghq-browser-agent.com/datadog-rum-v4.js" crossorigin="anonymous"></script>
     <script src="https://www.datadoghq-browser-agent.com/datadog-logs-v4.js" crossorigin="anonymous"></script>
 
-    <!-- Initialize Datadog RUM -->
+    <!-- Initialize Datadog RUM with Hardcoded Configuration -->
     <script>
         (function() {
+            // Hardcoded Datadog RUM configuration (safe to expose publicly)
+            const DATADOG_CONFIG = {
+                clientToken: 'pub941f8b1659ac0af8597b9c41a0cfe121', // Public client token - safe to expose
+                applicationId: 'fde3bfb4-cc7c-49ad-82c2-9fed18ce298c', // Public application ID - safe to expose
+                site: 'datadoghq.com', // Datadog site
+                service: 'llm-observability-demo',
+                env: 'production',
+                version: '1.0.0',
+                sessionSampleRate: 100,
+                sessionReplaySampleRate: 20,
+                trackUserInteractions: true,
+                trackResources: true,
+                trackLongTasks: true,
+                defaultPrivacyLevel: 'mask-user-input'
+            };
+
             // Function to initialize Datadog
             function initializeDatadog() {
-                if (!window.CONFIG) {
-                    console.warn('⚠️ CONFIG not available, retrying...');
-                    setTimeout(initializeDatadog, 100);
-                    return;
-                }
-
-                const config = window.CONFIG;
-
-                // Check if we have valid tokens
-                const hasValidTokens = config.DATADOG_CLIENT_TOKEN &&
-                                     config.DATADOG_APPLICATION_ID &&
-                                     config.DATADOG_CLIENT_TOKEN !== 'YOUR_DATADOG_CLIENT_TOKEN' &&
-                                     config.DATADOG_APPLICATION_ID !== 'YOUR_DATADOG_APPLICATION_ID';
+                // Check if we have valid tokens (not placeholder values)
+                const hasValidTokens = DATADOG_CONFIG.clientToken &&
+                                     DATADOG_CONFIG.applicationId &&
+                                     DATADOG_CONFIG.clientToken !== 'pub_1234567890abcdef1234567890abcdef' &&
+                                     DATADOG_CONFIG.applicationId !== '12345678-1234-1234-1234-123456789012';
 
                 if (!hasValidTokens) {
                     console.warn('⚠️ Datadog tokens not configured - RUM not initialized');
+                    console.log('📝 To enable Datadog RUM:');
+                    console.log('   1. Get your Client Token from Datadog → Organization Settings → API Keys');
+                    console.log('   2. Get your Application ID from Datadog → RUM → Applications');
+                    console.log('   3. Replace the hardcoded values in index.html');
+                    
                     // Create placeholder objects to prevent errors
                     window.DD_RUM = window.DD_RUM || {
                         init: () => {},
@@ -56,20 +69,7 @@
                 try {
                     // Initialize RUM
                     if (window.DD_RUM) {
-                        window.DD_RUM.init({
-                            clientToken: config.DATADOG_CLIENT_TOKEN,
-                            applicationId: config.DATADOG_APPLICATION_ID,
-                            site: config.DATADOG_SITE || 'datadoghq.com',
-                            service: config.DATADOG_SERVICE || 'llm-observability-demo',
-                            env: config.DATADOG_ENV || 'production',
-                            version: config.DATADOG_VERSION || '1.0.0',
-                            sessionSampleRate: 100,
-                            sessionReplaySampleRate: 20,
-                            trackUserInteractions: true,
-                            trackResources: true,
-                            trackLongTasks: true,
-                            defaultPrivacyLevel: 'mask-user-input'
-                        });
+                        window.DD_RUM.init(DATADOG_CONFIG);
 
                         window.DD_RUM.startSessionReplayRecording();
 
@@ -77,28 +77,37 @@
                         window.DD_RUM.setGlobalContextProperty('application_type', 'llm_demo');
                         window.DD_RUM.setGlobalContextProperty('deployment_method', 'static_hosting');
                         window.DD_RUM.setGlobalContextProperty('framework', 'vanilla_js');
+                        window.DD_RUM.setGlobalContextProperty('demo_version', '1.0.0');
                     }
 
                     // Initialize Logs
                     if (window.DD_LOGS) {
                         window.DD_LOGS.init({
-                            clientToken: config.DATADOG_CLIENT_TOKEN,
-                            site: config.DATADOG_SITE || 'datadoghq.com',
-                            service: config.DATADOG_SERVICE || 'llm-observability-demo',
-                            env: config.DATADOG_ENV || 'production',
-                            version: config.DATADOG_VERSION || '1.0.0',
-                            sessionSampleRate: 100,
+                            clientToken: DATADOG_CONFIG.clientToken,
+                            site: DATADOG_CONFIG.site,
+                            service: DATADOG_CONFIG.service,
+                            env: DATADOG_CONFIG.env,
+                            version: DATADOG_CONFIG.version,
+                            sessionSampleRate: DATADOG_CONFIG.sessionSampleRate,
                             silentMultipleInit: true
                         });
                     }
 
                     console.log('✅ Datadog RUM and Logs initialized successfully');
+                    console.log('📊 RUM Configuration:', {
+                        site: DATADOG_CONFIG.site,
+                        service: DATADOG_CONFIG.service,
+                        env: DATADOG_CONFIG.env,
+                        version: DATADOG_CONFIG.version
+                    });
 
                     // Track page load
                     if (window.DD_RUM) {
                         window.DD_RUM.addAction('page_loaded', {
                             page_type: 'llm_demo',
-                            timestamp: new Date().toISOString()
+                            timestamp: new Date().toISOString(),
+                            url: window.location.href,
+                            user_agent: navigator.userAgent
                         });
                     }
 
@@ -107,8 +116,12 @@
                 }
             }
 
-            // Start initialization
-            initializeDatadog();
+            // Start initialization when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeDatadog);
+            } else {
+                initializeDatadog();
+            }
         })();
     </script>
 </head>

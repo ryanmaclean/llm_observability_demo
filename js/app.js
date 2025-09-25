@@ -17,10 +17,8 @@ class LLMObservabilityDemo {
             // Initialize UI
             window.UIManager.initialize();
             
-            // Mark Datadog as initialized if configured
-            if (window.CONFIG.isDatadogConfigured()) {
-                window.DatadogLLM.markInitialized();
-            }
+            // Mark Datadog as ready
+            window.DatadogLLM.markInitialized();
             
             this.isInitialized = true;
             console.log('✅ LLM Observability Demo initialized successfully');
@@ -28,12 +26,11 @@ class LLMObservabilityDemo {
             // Log app initialization
             if (window.DatadogLLM) {
                 window.DatadogLLM.logLLMInteraction('app_initialized', {
-                    version: window.CONFIG.DATADOG_VERSION,
-                    site: window.CONFIG.DATADOG_SITE,
-                    service: window.CONFIG.DATADOG_SERVICE,
-                    env: window.CONFIG.DATADOG_ENV,
-                    has_openai_config: window.CONFIG.isOpenAIConfigured(),
-                    has_datadog_config: window.CONFIG.isDatadogConfigured()
+                    version: '1.0.0',
+                    deployment_method: 'static_hosting',
+                    framework: 'vanilla_js',
+                    has_openai_config: window.OpenAIService.isConfigured(),
+                    datadog_ready: true
                 });
             }
 
@@ -56,22 +53,26 @@ class LLMObservabilityDemo {
     }
 
     initializeServices() {
-        // Initialize OpenAI service with current config
+        // Initialize OpenAI service (will be configured by user in UI)
         window.OpenAIService.initialize({
-            apiKey: window.CONFIG.OPENAI_API_KEY,
-            model: window.CONFIG.OPENAI_MODEL
+            apiKey: '',
+            model: 'gpt-4o-mini'
         });
 
         console.log('📊 Services initialized:', {
             openai_configured: window.OpenAIService.isConfigured(),
-            datadog_configured: window.CONFIG.isDatadogConfigured()
+            datadog_ready: true
         });
     }
 
     // Test LLM observability functionality
     async testObservability() {
-        if (!window.CONFIG.isOpenAIConfigured()) {
+        if (!window.OpenAIService.isConfigured()) {
             console.warn('⚠️ OpenAI not configured - skipping observability test');
+            console.log('📝 To test observability:');
+            console.log('   1. Enter your OpenAI API key in the configuration panel');
+            console.log('   2. Try a chat interaction');
+            console.log('   3. Check browser console for Datadog logs');
             return;
         }
 
@@ -89,12 +90,8 @@ class LLMObservabilityDemo {
                 responseTime: response.responseTime
             });
 
-            // Check if Datadog logging worked
-            if (window.CONFIG.isDatadogConfigured()) {
-                console.log('📊 Check your Datadog dashboard for LLM observability data');
-            } else {
-                console.log('⚠️ Datadog not configured - observability data logged to console only');
-            }
+            console.log('📊 Check your Datadog dashboard for LLM observability data');
+            console.log('📝 If Datadog is not configured, data is logged to console');
 
         } catch (error) {
             console.error('❌ LLM Observability test failed:', error);
@@ -111,7 +108,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.LLMDemo = app;
     
     // Auto-test observability if OpenAI is configured
-    if (window.CONFIG.isOpenAIConfigured()) {
+    if (window.OpenAIService.isConfigured()) {
         setTimeout(() => app.testObservability(), 1000);
     }
 });

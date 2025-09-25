@@ -374,4 +374,17 @@ If you have questions or need help:
 
 ---
 
+## 🔐 Security Model
+
+**Static Deployment Security**:
+- **Datadog RUM tokens**: Hardcoded in code (public values, safe to expose)
+- **OpenAI API key**: User-supplied via UI (never stored in repository)
+- **No GitHub secrets required**: Direct deployment to Pages without credentials
+
+**User Privacy**:
+- API keys stored only in browser localStorage
+- No server-side storage of sensitive data
+- Datadog RUM uses `mask-user-input` privacy level
+- All data processing happens client-side
+
 **Note**: This is a demonstration repository. For production use, please review and adapt the code according to your specific requirements and security policies.

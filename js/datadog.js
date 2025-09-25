@@ -16,7 +16,7 @@ class DatadogLLMObservability {
 
     // Log LLM interaction to Datadog
     logLLMInteraction(type, data) {
-        if (!this.isInitialized || !window.DD_RUM) {
+        if (!window.DD_RUM || !window.DD_RUM.addAction) {
             console.log(`[Datadog Log] ${type}:`, data);
             return;
         }
@@ -27,7 +27,8 @@ class DatadogLLMObservability {
                 timestamp: Date.now(),
                 session_id: this.sessionId,
                 interaction_type: type,
-                application_type: 'llm_demo'
+                application_type: 'llm_demo',
+                demo_version: '1.0.0'
             };
 
             window.DD_RUM.addAction(`llm_${type}`, actionData);
@@ -129,7 +130,7 @@ class DatadogLLMObservability {
     // Mark as initialized
     markInitialized() {
         this.isInitialized = true;
-        console.log('✅ Datadog LLM Observability initialized');
+        console.log('✅ Datadog LLM Observability ready');
     }
 }
 
