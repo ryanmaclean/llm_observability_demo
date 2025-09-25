@@ -244,6 +244,39 @@
                 console.log('Check Datadog RUM dashboard for live sessions');
             };
 
+            // OpenAI configuration debug function
+            window.debugOpenAI = function() {
+                console.log('🤖 OpenAI Configuration Debug:');
+                console.log('============================');
+                
+                // Check service status
+                console.log('OpenAI Service Available:', !!window.OpenAIService);
+                console.log('Service Configured:', window.OpenAIService ? window.OpenAIService.isConfigured() : false);
+                
+                // Check localStorage
+                const savedKey = localStorage.getItem('openai_api_key');
+                const savedModel = localStorage.getItem('openai_model');
+                console.log('Saved API Key:', savedKey ? savedKey.substring(0, 10) + '...' : 'None');
+                console.log('Saved Model:', savedModel || 'None');
+                
+                // Check form values
+                const apiKeyInput = document.getElementById('apiKey');
+                const modelSelect = document.getElementById('model');
+                console.log('Form API Key:', apiKeyInput ? apiKeyInput.value.substring(0, 10) + '...' : 'Input not found');
+                console.log('Form Model:', modelSelect ? modelSelect.value : 'Select not found');
+                
+                // Check service internal state
+                if (window.OpenAIService) {
+                    console.log('Service API Key:', window.OpenAIService.apiKey ? window.OpenAIService.apiKey.substring(0, 10) + '...' : 'None');
+                    console.log('Service Model:', window.OpenAIService.model);
+                }
+                
+                console.log('💡 If not configured, try:');
+                console.log('   1. Enter your API key in the form');
+                console.log('   2. Click "Save OpenAI Configuration" button');
+                console.log('   3. Or type: window.UIManager.saveOpenAIKey()');
+            };
+
             // Auto-refresh configuration display when page loads
             setTimeout(() => {
                 if (window.refreshConfiguration) {
@@ -565,6 +598,11 @@ if span:
                         <option value="gpt-4o">GPT-4o</option>
                         <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
                     </select>
+                </div>
+                <div class="config-item">
+                    <button onclick="window.UIManager.saveOpenAIKey()" style="background: #28a745; margin-top: 10px;">
+                        💾 Save OpenAI Configuration
+                    </button>
                 </div>
             </div>
 

@@ -193,6 +193,12 @@ class UIManager {
             window.OpenAIService.initialize({ apiKey, model });
 
             console.log('✅ OpenAI configuration saved');
+            console.log('🔑 API Key saved:', apiKey.substring(0, 10) + '...');
+            console.log('🤖 Model saved:', model);
+            console.log('🔍 Service configured:', window.OpenAIService.isConfigured());
+            
+            // Show success message
+            this.showSuccess('OpenAI API key saved successfully!');
             
             // Log configuration update to Datadog
             if (window.DatadogLLM) {
@@ -201,6 +207,9 @@ class UIManager {
                     model 
                 });
             }
+        } else {
+            console.log('⚠️ No API key provided');
+            this.showError('Please enter your OpenAI API key');
         }
     }
 
@@ -235,6 +244,10 @@ class UIManager {
             });
             
             console.log('✅ OpenAI configuration loaded from localStorage');
+            console.log('🔑 API Key loaded:', savedApiKey.substring(0, 10) + '...');
+            console.log('🤖 Model loaded:', savedModel || 'gpt-4o-mini');
+        } else {
+            console.log('⚠️ No saved OpenAI configuration found');
         }
     }
 
