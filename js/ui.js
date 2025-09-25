@@ -161,126 +161,80 @@ class UIManager {
     }
 
     setupConfiguration() {
-        document.getElementById('saveConfig').addEventListener('click', () => {
-            this.saveConfiguration();
-        });
+        // Add event listener for OpenAI API key input
+        const apiKeyInput = document.getElementById('apiKey');
+        if (apiKeyInput) {
+            apiKeyInput.addEventListener('input', () => {
+                this.saveOpenAIKey();
+            });
+        }
 
-        document.getElementById('resetConfig').addEventListener('click', () => {
-            this.resetConfiguration();
-        });
-
-        // Custom site handling
-        document.getElementById('ddSite').addEventListener('change', (e) => {
-            const customContainer = document.getElementById('customSiteContainer');
-            if (e.target.value === 'custom') {
-                customContainer.style.display = 'block';
-            } else {
-                customContainer.style.display = 'none';
-            }
-        });
+        // Add event listener for model selection
+        const modelSelect = document.getElementById('model');
+        if (modelSelect) {
+            modelSelect.addEventListener('change', () => {
+                this.saveOpenAIKey();
+            });
+        }
 
         this.loadConfiguration();
     }
 
-    saveConfiguration() {
-        // OpenAI configuration
+    saveOpenAIKey() {
         const apiKey = document.getElementById('apiKey').value.trim();
         const model = document.getElementById('model').value;
 
-        // Datadog configuration
-        const datadogConfig = {
-            applicationId: document.getElementById('ddApplicationId').value.trim(),
-            clientToken: document.getElementById('ddClientToken').value.trim(),
-            site: document.getElementById('ddSite').value === 'custom' 
-                ? document.getElementById('ddCustomSite').value.trim() 
-                : document.getElementById('ddSite').value,
-            service: document.getElementById('ddService').value.trim() || 'llm-observability-demo',
-            env: document.getElementById('ddEnv').value,
-            version: document.getElementById('ddVersion').value.trim() || '1.0.0',
-            sessionSampleRate: parseInt(document.getElementById('ddSessionSampleRate').value) || 100,
-            replaySampleRate: parseInt(document.getElementById('ddReplaySampleRate').value) || 20,
-            trackUserInteractions: document.getElementById('ddTrackUserInteractions').checked,
-            trackResources: document.getElementById('ddTrackResources').checked,
-            trackLongTasks: document.getElementById('ddTrackLongTasks').checked
-        };
+        if (apiKey) {
+            // Save to localStorage
+            localStorage.setItem('openai_api_key', apiKey);
+            localStorage.setItem('openai_model', model);
 
-        if (!apiKey) {
-            this.showError('Please enter your OpenAI API key.');
-            return;
-        }
+            // Update OpenAI service
+            window.OpenAIService.initialize({ apiKey, model });
 
-        // Update global config
-        window.CONFIG.OPENAI_API_KEY = apiKey;
-        window.CONFIG.OPENAI_MODEL = model;
-        window.CONFIG.DATADOG_CLIENT_TOKEN = datadogConfig.clientToken;
-        window.CONFIG.DATADOG_APPLICATION_ID = datadogConfig.applicationId;
-        window.CONFIG.DATADOG_SITE = datadogConfig.site;
-        window.CONFIG.DATADOG_SERVICE = datadogConfig.service;
-        window.CONFIG.DATADOG_ENV = datadogConfig.env;
-        window.CONFIG.DATADOG_VERSION = datadogConfig.version;
-
-        // Save to localStorage
-        window.CONFIG.save();
-
-        // Update services
-        window.OpenAIService.initialize({ apiKey, model });
-
-        this.showSuccess('Configuration saved successfully!');
-        
-        // Log configuration update to Datadog
-        if (window.DatadogLLM) {
-            window.DatadogLLM.logConfigurationUpdate({ apiKey, model, datadogConfig });
+            console.log('✅ OpenAI configuration saved');
+            
+            // Log configuration update to Datadog
+            if (window.DatadogLLM) {
+                window.DatadogLLM.logConfigurationUpdate({ 
+                    apiKey: apiKey.substring(0, 10) + '...', 
+                    model 
+                });
+            }
         }
     }
 
     resetConfiguration() {
-        // Reset form fields
+        // Reset OpenAI form fields
         document.getElementById('apiKey').value = '';
         document.getElementById('model').value = 'gpt-4o-mini';
-        document.getElementById('ddApplicationId').value = '';
-        document.getElementById('ddClientToken').value = '';
-        document.getElementById('ddSite').value = 'datadoghq.com';
-        document.getElementById('ddCustomSite').value = '';
-        document.getElementById('ddService').value = 'llm-observability-demo';
-        document.getElementById('ddEnv').value = 'production';
-        document.getElementById('ddVersion').value = '1.0.0';
-        document.getElementById('ddSessionSampleRate').value = '100';
-        document.getElementById('ddReplaySampleRate').value = '20';
-        document.getElementById('ddTrackUserInteractions').checked = true;
-        document.getElementById('ddTrackResources').checked = true;
-        document.getElementById('ddTrackLongTasks').checked = true;
-        
-        // Hide custom site container
-        document.getElementById('customSiteContainer').style.display = 'none';
         
         // Clear localStorage
-        localStorage.removeItem('llm_demo_config');
+        localStorage.removeItem('openai_api_key');
+        localStorage.removeItem('openai_model');
         
-        this.showSuccess('Configuration reset to defaults!');
+        // Reinitialize OpenAI service with empty config
+        window.OpenAIService.initialize({ apiKey: '', model: 'gpt-4o-mini' });
+        
+        console.log('✅ OpenAI configuration reset');
     }
 
     loadConfiguration() {
-        // Populate form fields from global config
-        document.getElementById('apiKey').value = window.CONFIG.OPENAI_API_KEY;
-        document.getElementById('model').value = window.CONFIG.OPENAI_MODEL;
-        document.getElementById('ddApplicationId').value = window.CONFIG.DATADOG_APPLICATION_ID;
-        document.getElementById('ddClientToken').value = window.CONFIG.DATADOG_CLIENT_TOKEN;
-        document.getElementById('ddService').value = window.CONFIG.DATADOG_SERVICE;
-        document.getElementById('ddEnv').value = window.CONFIG.DATADOG_ENV;
-        document.getElementById('ddVersion').value = window.CONFIG.DATADOG_VERSION;
-        
-        // Handle site selection
-        const siteSelect = document.getElementById('ddSite');
-        const customContainer = document.getElementById('customSiteContainer');
-        const customSiteInput = document.getElementById('ddCustomSite');
-        
-        if (window.CONFIG.DATADOG_SITE && !['datadoghq.com', 'datadoghq.eu', 'us3.datadoghq.com', 'us5.datadoghq.com', 'ap1.datadoghq.com'].includes(window.CONFIG.DATADOG_SITE)) {
-            siteSelect.value = 'custom';
-            customContainer.style.display = 'block';
-            customSiteInput.value = window.CONFIG.DATADOG_SITE;
-        } else {
-            siteSelect.value = window.CONFIG.DATADOG_SITE || 'datadoghq.com';
-            customContainer.style.display = 'none';
+        // Load OpenAI configuration from localStorage
+        const savedApiKey = localStorage.getItem('openai_api_key');
+        const savedModel = localStorage.getItem('openai_model');
+
+        if (savedApiKey) {
+            document.getElementById('apiKey').value = savedApiKey;
+            document.getElementById('model').value = savedModel || 'gpt-4o-mini';
+            
+            // Initialize OpenAI service with saved config
+            window.OpenAIService.initialize({ 
+                apiKey: savedApiKey, 
+                model: savedModel || 'gpt-4o-mini' 
+            });
+            
+            console.log('✅ OpenAI configuration loaded from localStorage');
         }
     }
 
@@ -299,7 +253,8 @@ class UIManager {
         this.sessionMetrics.responseTimes.push(responseTime);
 
         // Calculate cost (approximate rates)
-        const costPerToken = window.CONFIG.OPENAI_MODEL.includes('gpt-4o') ? 0.00003 : 0.000002;
+        const model = localStorage.getItem('openai_model') || 'gpt-4o-mini';
+        const costPerToken = model.includes('gpt-4o') ? 0.00003 : 0.000002;
         this.sessionMetrics.totalCost += usage.total_tokens * costPerToken;
 
         // Update UI

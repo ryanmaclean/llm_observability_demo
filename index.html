@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LLM Observability Demo</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Load Configuration First -->
-    <script src="config.js"></script>
-
     <!-- Datadog RUM SDK -->
     <script src="https://www.datadoghq-browser-agent.com/datadog-rum-v4.js" crossorigin="anonymous"></script>
     <script src="https://www.datadoghq-browser-agent.com/datadog-logs-v4.js" crossorigin="anonymous"></script>
@@ -574,38 +571,6 @@ if span:
                 </div>
             </div>
 
-            <div class="config-section">
-                <h4>🔧 Advanced Datadog Settings</h4>
-                <div class="config-item">
-                    <label for="ddSessionSampleRate">Session Sample Rate (%):</label>
-                    <input type="number" id="ddSessionSampleRate" min="0" max="100" value="100" />
-                </div>
-                <div class="config-item">
-                    <label for="ddReplaySampleRate">Session Replay Sample Rate (%):</label>
-                    <input type="number" id="ddReplaySampleRate" min="0" max="100" value="20" />
-                </div>
-                <div class="config-item">
-                    <label>
-                        <input type="checkbox" id="ddTrackUserInteractions" checked />
-                        Track User Interactions
-                    </label>
-                </div>
-                <div class="config-item">
-                    <label>
-                        <input type="checkbox" id="ddTrackResources" checked />
-                        Track Resources
-                    </label>
-                </div>
-                <div class="config-item">
-                    <label>
-                        <input type="checkbox" id="ddTrackLongTasks" checked />
-                        Track Long Tasks
-                    </label>
-                </div>
-            </div>
-
-            <button id="saveConfig">Save Configuration</button>
-            <button id="resetConfig">Reset to Defaults</button>
         </div>
     </div>
 
